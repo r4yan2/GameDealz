@@ -22,7 +22,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
 import android.text.style.StyleSpan
-import androidx.annotation.ColorRes
+import androidx.annotation.ColorInt
 import androidx.annotation.WorkerThread
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
@@ -47,13 +47,13 @@ data class DealRenderModel(
 @WorkerThread
 fun DealModel.toRenderModel(
     resourcesProvider: ResourcesProvider,
-    @ColorRes newPriceColorRes: Int,
-    @ColorRes oldPriceColorRest: Int
+    @ColorInt newPriceColor: Int,
+    @ColorInt oldPriceColor: Int
 ) =
     DealRenderModel(
         gameId,
         title,
-        newAndOldPriceSpan(resourcesProvider.getColor(newPriceColorRes), resourcesProvider.getColor(oldPriceColorRest)),
+        newAndOldPriceSpan(newPriceColor, oldPriceColor),
         storeAndTimeSpan(resourcesProvider),
         urls.imageUrl,
         urls.buyUrl,
@@ -87,5 +87,4 @@ private fun DealModel.storeAndTimeSpan(resourcesProvider: ResourcesProvider): Sp
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-
 }

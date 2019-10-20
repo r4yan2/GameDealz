@@ -52,18 +52,10 @@ class DealsFragment : BaseFragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
-    private val dealsViewModel by viewModel<DealsViewModel> { parametersOf(requireActivity()) }
+    private val dealsViewModel by viewModel<DealsViewModel>()
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
         parametersOf(this, { dealsViewModel.onRefresh() })
-    }
-
-    private val dealsAdapter by lazy {
-        DealsAdapter {
-            listener?.onFragmentInteraction(
-                DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl), null
-            )
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +73,8 @@ class DealsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         val context = requireContext()
         NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
-        setupRecyclerView()
+
+        setupRecyclerView(setupAdapter())
         setupFilterFab()
         stateVisibilityHandler.onViewCreated()
         swipeToRefresh.setColorSchemeColors(context.resolveThemeColor(R.attr.colorSecondary))
@@ -89,30 +82,11 @@ class DealsFragment : BaseFragment() {
             context.resolveThemeColor(R.attr.swipe_refresh_background)
         )
         swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
-
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        dealsViewModel.deals.observe(this, Observer {
-            dealsAdapter.submitList(it)
-        })
-        dealsViewModel.sideEffect.observe(this, Observer {
-            when (it) {
-                is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
-                is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
-                is SideEffect.ShowLoading, SideEffect.HideLoading, SideEffect.ShowEmpty -> {
-                    if (it is SideEffect.ShowLoading) {
-                        filterFab.hide()
-                    } else {
-                        filterFab.show()
-                    }
-                    stateVisibilityHandler.onSideEffect(it)
-                }
-                else -> stateVisibilityHandler.onSideEffect(it)
-            }
-        })
+    override fun onDestroyView() {
+        super.onDestroyView()
+        content.adapter = null
     }
 
     override fun onAttach(context: Context) {
@@ -140,8 +114,8 @@ class DealsFragment : BaseFragment() {
         fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
     }
 
-    private fun setupRecyclerView() = with(content) {
-        adapter = dealsAdapter
+    private fun setupRecyclerView(adapter: DealsAdapter) = with(content) {
+        this.adapter = adapter
         addItemDecoration(StaggeredGridDecorator(requireContext()))
         layoutManager =
                 StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
@@ -154,6 +128,34 @@ class DealsFragment : BaseFragment() {
 
     private fun setupFilterFab() {
         filterFab.setOnClickListener { DealsFilterDialogFragment().show(childFragmentManager, null) }
+    }
+
+    private fun setupAdapter(): DealsAdapter {
+        val dealsAdapter = DealsAdapter {
+            listener?.onFragmentInteraction(
+                DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl), null
+            )
+        }
+
+        dealsViewModel.deals.observe(this, Observer {
+            dealsAdapter.submitList(it)
+        })
+        dealsViewModel.sideEffect.observe(this, Observer {
+            when (it) {
+                is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
+                is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
+                is SideEffect.ShowLoading, SideEffect.HideLoading, SideEffect.ShowEmpty -> {
+                    if (it is SideEffect.ShowLoading) {
+                        filterFab.hide()
+                    } else {
+                        filterFab.show()
+                    }
+                    stateVisibilityHandler.onSideEffect(it)
+                }
+                else -> stateVisibilityHandler.onSideEffect(it)
+            }
+        })
+        return dealsAdapter
     }
 
     private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {

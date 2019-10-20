@@ -17,30 +17,36 @@
 
 package de.r4md4c.gamedealz.common.navigation
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Parcelable
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import androidx.navigation.findNavController
+import de.r4md4c.commonproviders.appcompat.FragmentActivityProvider
+import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.deals.DealsFragmentDirections
 import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
 
 class AndroidNavigator(
-    private val context: Context,
-    private val navController: NavController
+    private val fragmentActivityProvider: FragmentActivityProvider
 ) : Navigator {
 
     override fun navigate(uri: String, extras: Parcelable?) {
         val navDirection: NavDirections? = getNavDirections(Uri.parse(uri), extras)
-        navDirection?.let { navController.navigate(navDirection) }
+        navDirection?.let { navController?.navigate(navDirection) }
     }
 
-    override fun navigateUp() = navController.navigateUp()
+    override fun navigateUp() = navController?.navigateUp() ?: false
 
     override fun navigateToUrl(url: String) {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        fragmentActivityProvider.fragmentActivity?.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(url)
+            )
+        )
     }
 
     private fun getNavDirections(parsedUri: Uri, extras: Parcelable?): NavDirections? =
@@ -65,4 +71,6 @@ class AndroidNavigator(
             }
         }
 
+    private val navController: NavController?
+        get() = fragmentActivityProvider.fragmentActivity?.findNavController(R.id.nav_host_fragment)
 }

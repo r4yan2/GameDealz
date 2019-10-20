@@ -21,7 +21,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -32,6 +31,7 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
+import de.r4md4c.commonproviders.appcompat.BaseActivity
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.deals.DealsFragment
@@ -41,9 +41,8 @@ import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
-class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionListener,
+class HomeActivity : BaseActivity(), DealsFragment.OnFragmentInteractionListener,
     SearchFragment.OnFragmentInteractionListener, RegionSelectionDialogFragment.OnRegionChangeSubmitted {
 
     private lateinit var drawer: Drawer
@@ -51,9 +50,9 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     val drawerLayout: DrawerLayout
         get() = drawer.drawerLayout
 
-    private val viewModel: HomeViewModel by viewModel { parametersOf(this) }
+    private val viewModel: HomeViewModel by viewModel()
 
-    private val navigator: Navigator by inject { parametersOf(this) }
+    private val navigator: Navigator by inject()
 
     private val navController
         get() = findNavController(R.id.nav_host_fragment)

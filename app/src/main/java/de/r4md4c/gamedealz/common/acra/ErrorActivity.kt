@@ -23,7 +23,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import de.r4md4c.commonproviders.appcompat.BaseActivity
 import de.r4md4c.gamedealz.BuildConfig
 import de.r4md4c.gamedealz.R
 import kotlinx.android.parcel.Parcelize
@@ -44,7 +44,7 @@ data class ErrorInfo(
     val packageName: String
 ) : Parcelable
 
-class ErrorActivity : AppCompatActivity() {
+class ErrorActivity : BaseActivity() {
 
     private val errorInfo by lazy { intent.getParcelableExtra<ErrorInfo>(EXTRA_ERROR_INFO) }
 

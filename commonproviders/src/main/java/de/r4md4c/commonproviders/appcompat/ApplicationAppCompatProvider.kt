@@ -18,8 +18,16 @@
 package de.r4md4c.commonproviders.appcompat
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.FragmentActivity
+import java.util.concurrent.atomic.AtomicReference
 
-internal class ApplicationAppCompatProvider : AppCompatProvider {
+internal class ApplicationAppCompatProvider : AppCompatProvider, FragmentActivityProvider {
+
+    private val _fragmentActivity = AtomicReference<FragmentActivity?>(null)
+
+    override var fragmentActivity: FragmentActivity?
+        get() = _fragmentActivity.get()
+        set(value) = _fragmentActivity.set(value)
 
     override var currentNightMode: NightMode
         get() = AppCompatDelegate.getDefaultNightMode().fromAppCompatNightMode()

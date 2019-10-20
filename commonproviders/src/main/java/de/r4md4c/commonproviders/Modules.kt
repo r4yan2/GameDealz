@@ -20,6 +20,7 @@ package de.r4md4c.commonproviders
 import android.app.Activity
 import de.r4md4c.commonproviders.appcompat.AppCompatProvider
 import de.r4md4c.commonproviders.appcompat.ApplicationAppCompatProvider
+import de.r4md4c.commonproviders.appcompat.FragmentActivityProvider
 import de.r4md4c.commonproviders.configuration.AndroidConfigurationImpl
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers
@@ -42,7 +43,11 @@ val COMMON_PROVIDERS = module {
 
     single<IDispatchers> { GameDealzDispatchers }
 
-    factory<AppCompatProvider> { ApplicationAppCompatProvider() }
+    single { ApplicationAppCompatProvider() }
+
+    factory<AppCompatProvider> { get<ApplicationAppCompatProvider>() }
+
+    factory<FragmentActivityProvider> { get<ApplicationAppCompatProvider>() }
 
     factory<ConfigurationProvider> { AndroidConfigurationImpl(androidContext()) }
 

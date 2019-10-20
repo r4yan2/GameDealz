@@ -2,4 +2,5 @@
 <resources>
     <attr name="swipe_refresh_background" format="color"/>
     <attr name="new_price_text_color" format="color"/>
+    <attr name="old_price_text_color" format="color" />
 </resources>

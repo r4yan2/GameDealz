@@ -67,7 +67,7 @@ class DetailsFragment : BaseFragment() {
 
     private val plainId by lazy { fromBundle(arguments!!).plainId }
 
-    private val detailsViewModel by viewModel<DetailsViewModel> { parametersOf(requireActivity()) }
+    private val detailsViewModel by viewModel<DetailsViewModel>()
 
     private val resourcesProvider: ResourcesProvider by inject(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
 

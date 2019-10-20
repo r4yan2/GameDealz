@@ -13,6 +13,7 @@
         <item name="materialAlertDialogTheme">@style/AppTheme.AlertDialog</item>
 
         <item name="new_price_text_color">@color/newPriceColor</item>
+        <item name="old_price_text_color">@color/oldPriceColor</item>
         <item name="swipe_refresh_background">@color/swipeToRefreshBackground</item>
 
         <item name="material_drawer_header_selection_text">?colorOnSurface</item>

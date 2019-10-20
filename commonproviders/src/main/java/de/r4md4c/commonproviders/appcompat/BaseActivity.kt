@@ -15,9 +15,22 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.res
+package de.r4md4c.commonproviders.appcompat
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
+import org.koin.android.ext.android.inject
 
-internal class ActivityBasedAndroidResourcesProvider(activity: Activity) : AndroidResourcesProvider(activity) {
+abstract class BaseActivity : AppCompatActivity() {
+
+    private val fragmentActivityProvider: FragmentActivityProvider by inject()
+
+    override fun onStart() {
+        super.onStart()
+        fragmentActivityProvider.fragmentActivity = this
+    }
+
+    override fun onStop() {
+        super.onStop()
+        fragmentActivityProvider.fragmentActivity = null
+    }
 }

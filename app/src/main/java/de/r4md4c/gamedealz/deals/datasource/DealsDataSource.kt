@@ -18,7 +18,9 @@
 package de.r4md4c.gamedealz.deals.datasource
 
 import androidx.paging.PositionalDataSource
+import de.r4md4c.commonproviders.appcompat.FragmentActivityProvider
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
+import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.state.Event
@@ -37,7 +39,8 @@ import timber.log.Timber
 class DealsDataSource(
     private val getDealsUseCase: GetDealsUseCase,
     private val stateMachineDelegate: StateMachineDelegate,
-    private val resourcesProvider: ResourcesProvider
+    private val resourcesProvider: ResourcesProvider,
+    private val activityProvider: FragmentActivityProvider
 ) : PositionalDataSource<DealRenderModel>() {
 
     private var job: Job? = null
@@ -56,12 +59,12 @@ class DealsDataSource(
                 }
             }.onSuccess {
                 stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
-                if (!it.second.isEmpty()) {
+                if (it.second.isNotEmpty()) {
                     callback.onResult(it.second.map { d ->
                         d.toRenderModel(
                             resourcesProvider,
-                            R.color.newPriceColor,
-                            R.color.oldPriceColor
+                            newPriceTextColor,
+                            oldPriceTextColor
                         )
                     })
                 }
@@ -93,8 +96,8 @@ class DealsDataSource(
                     deals.second.map {
                         it.toRenderModel(
                             resourcesProvider,
-                            R.color.newPriceColor,
-                            R.color.oldPriceColor
+                            newPriceTextColor,
+                            oldPriceTextColor
                         )
                     },
                     deals.second.size
@@ -106,4 +109,11 @@ class DealsDataSource(
             }
         }
     }
+
+    private val newPriceTextColor
+        get() = activityProvider.fragmentActivity!!.resolveThemeColor(R.attr.new_price_text_color)
+
+    private val oldPriceTextColor
+        get() = activityProvider.fragmentActivity!!.resolveThemeColor(R.attr.old_price_text_color)
+
 }

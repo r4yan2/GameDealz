@@ -17,12 +17,10 @@
 
 package de.r4md4c.gamedealz
 
-import android.app.Activity
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.paging.DataSource
-import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.FOR_APPLICATION
+import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.navigation.AndroidNavigator
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
@@ -60,18 +58,15 @@ val MAIN = module {
     factory<ShortcutManager> { ShortcutManagerImpl(androidContext(), get(name = FOR_APPLICATION)) }
 
     factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
-        DealsDataSourceFactory(get(), stateMachineDelegate, get(name = FOR_APPLICATION))
+        DealsDataSourceFactory(get(), stateMachineDelegate, get(name = FOR_APPLICATION), get())
     }
 
     factory<StateMachineDelegate> {
         UIStateMachineDelegate()
     }
 
-    factory<Navigator> { (activity: Activity) ->
-        AndroidNavigator(
-            activity,
-            activity.findNavController(R.id.nav_host_fragment)
-        )
+    factory<Navigator> {
+        AndroidNavigator(get())
     }
 
     factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get(name = FOR_APPLICATION)) }
@@ -95,10 +90,10 @@ val MAIN = module {
 
     viewModel<ManageWatchlistViewModel>()
 
-    viewModel { (activity: Activity) ->
+    viewModel {
         DetailsViewModel(
             get(),
-            get(parameters = { parametersOf(activity) }),
+            get(),
             get(),
             get(),
             get(),
